@@ -2,15 +2,14 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8" />
-<title>Stylish High-Precision Timer</title>
+<title>Responsive Stylish Timer</title>
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet" />
 <style>
   * {
     box-sizing: border-box;
   }
   html, body {
-    margin: 0;
-    padding: 0;
+    margin: 0; padding: 0;
     height: 100%;
     background: #1e1e1e;
     font-family: 'Poppins', sans-serif;
@@ -72,6 +71,7 @@
 
   .timer-wrapper {
     width: 320px;
+    max-width: 90vw;
     height: 140px;
     background: #2c2c2c;
     border-radius: 16px;
@@ -84,6 +84,7 @@
   #display {
     font-size: 3rem;
     letter-spacing: 2px;
+    word-break: break-word;
   }
   .buttons {
     margin-top: 15px;
@@ -102,6 +103,8 @@
     cursor: pointer;
     transition: background 0.2s;
     user-select: none;
+    flex: 1 1 120px;
+    max-width: 150px;
   }
   button:hover {
     background: #666;
@@ -110,6 +113,7 @@
     max-height: 160px;
     overflow-y: auto;
     width: 320px;
+    max-width: 90vw;
     margin-top: 25px;
     background: rgba(255,255,255,0.05);
     border-radius: 8px;
@@ -121,136 +125,6 @@
     border-bottom: 1px solid rgba(255,255,255,0.1);
     padding: 3px 0;
   }
-</style>
-</head>
-<body>
-<canvas id="bg"></canvas>
-<div class="container">
-  <div class="rings-row">
-    <div class="ring ring1" title="1/10000 sec"></div>
-    <div class="ring ring2" title="1/1000 sec"></div>
-    <div class="ring ring3" title="1/100 sec"></div>
-    <div class="ring ring4" title="1/10 sec"></div>
-    <div class="ring ring5" title="1 sec"></div>
-    <div class="ring ring6" title="1 min"></div>
-    <div class="ring ring7" title="1 hour"></div>
-  </div>
-  <div class="timer-wrapper">
-    <div id="display">00:00.0000</div>
-  </div>
-  <div class="buttons">
-    <button onclick="startTimer()">Start</button>
-    <button onclick="stopTimer()">Stop</button>
-    <button onclick="resetTimer()">Reset</button>
-    <button onclick="lap()">Lap</button>
-  </div>
-  <div id="laps"></div>
-</div>
 
-<script>
-let startTime;
-let elapsed = 0;
-let animationFrame;
-let lapCount = 0;
-const rings = document.querySelectorAll('.ring');
-
-function formatTime(ms) {
-  const totalSeconds = Math.floor(ms / 1000);
-  const minutes = String(Math.floor(totalSeconds / 60)).padStart(2,'0');
-  const seconds = String(totalSeconds % 60).padStart(2,'0');
-  const msec = Math.floor((ms % 1000) * 10);
-  return `${minutes}:${seconds}.${String(msec).padStart(4,'0')}`;
-}
-
-function updateDisplay(){
-  elapsed = performance.now() - startTime;
-  document.getElementById('display').textContent = formatTime(elapsed);
-  animationFrame = requestAnimationFrame(updateDisplay);
-}
-
-function startTimer(){
-  if(!animationFrame){
-    startTime = performance.now() - elapsed;
-    updateDisplay();
-    rings.forEach(ring => ring.style.animationPlayState = 'running');
-    document.querySelector('.timer-wrapper').style.animation = 'bounce 0.5s ease';
-  }
-}
-
-function stopTimer(){
-  if(animationFrame){
-    cancelAnimationFrame(animationFrame);
-    animationFrame = null;
-    rings.forEach(ring => ring.style.animationPlayState = 'paused');
-  }
-}
-
-function resetTimer(){
-  stopTimer();
-  elapsed = 0;
-  lapCount = 0;
-  document.getElementById('display').textContent = formatTime(0);
-  document.getElementById('laps').innerHTML = '';
-  rings.forEach(ring => {
-    const duration = getComputedStyle(ring).animationDuration;
-    ring.style.animation = 'none';
-    ring.offsetHeight;
-    ring.style.animation = `spin ${duration} linear infinite paused`;
-  });
-}
-
-function lap(){
-  if(elapsed > 0){
-    lapCount++;
-    const lapTime = formatTime(elapsed);
-    const lapDiv = document.createElement('div');
-    lapDiv.textContent = `Lap ${lapCount}: ${lapTime}`;
-    document.getElementById('laps').prepend(lapDiv);
-    document.getElementById('laps').scrollTop = 0;
-  }
-}
-
-const canvas = document.getElementById('bg');
-const ctx = canvas.getContext('2d');
-let particles = [];
-
-function resizeCanvas() {
-  canvas.width = window.innerWidth;
-  canvas.height = window.innerHeight;
-}
-window.addEventListener('resize', resizeCanvas);
-resizeCanvas();
-
-function createParticles(count) {
-  particles = [];
-  for (let i = 0; i < count; i++) {
-    particles.push({
-      x: Math.random() * canvas.width,
-      y: Math.random() * canvas.height,
-      r: Math.random() * 2 + 1.5,
-      dx: (Math.random() - 0.5) * 0.5,
-      dy: (Math.random() - 0.5) * 0.5,
-    });
-  }
-}
-
-function drawParticles() {
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-  ctx.fillStyle = 'rgba(255, 255, 255, 0.07)';
-  for (let p of particles) {
-    ctx.beginPath();
-    ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-    ctx.fill();
-    p.x += p.dx;
-    p.y += p.dy;
-    if (p.x < 0 || p.x > canvas.width) p.dx *= -1;
-    if (p.y < 0 || p.y > canvas.height) p.dy *= -1;
-  }
-  requestAnimationFrame(drawParticles);
-}
-
-createParticles(120);
-drawParticles();
-</script>
-</body>
-</html>
+  /* スマホ・狭い画面用 */
+  @media (max
